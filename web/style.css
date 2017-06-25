@@ -23,6 +23,12 @@ body {
   fill: #fff;
 }
 
+#website {
+  font-weight: bold;
+  font-size: 1.5em;
+  text-align: center;
+}
+
 #chart {
   position: relative;
 }
