@@ -11,7 +11,10 @@ var b = {
 // Total size of all segments; we set this later, after loading the data.
 var totalSize = 0;
 
-var color = d3.scaleOrdinal(d3.schemeCategory10);
+var color = d3.scaleLinear()
+	.interpolate(d3.interpolateHcl)
+	.domain([0.2, 0.4, 0.6, 0.8, 1])
+	.range([d3.rgb("#FF0000"), d3.rgb("#FF7F00"), d3.rgb("#FFFF00"), d3.rgb("#7FFF00"), d3.rgb("#00FF00")]);
 
 var vis = d3.select("#chart").append("svg:svg")
 		.attr("width", width)
@@ -58,7 +61,7 @@ d3.json("coverage.json", function(error, root) {
 			.attr("display", function(d) { return d.depth ? null : "none"; })
 			.attr("d", arc)
 			.attr("fill-rule", "evenodd")
-			.style("fill", function(d) { return color(d.depth); })
+			.style("fill", function(d) { return color(d.data.numLeavesArchived/d.data.numLeaves); })
 			.style("opacity", 1)
 			.on("mouseover", mouseover)/*
 			.each(stash)
