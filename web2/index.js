@@ -4,11 +4,11 @@ var height = 900;
 
 // D3 Projection
 var projection = d3.geoAlbersUsa()
-				   .translate([width/2, height/2])    // translate to center of screen
-				   .scale(2000);          // scale things down so see entire US
-        
+				   .translate([width/2, height/2])	// translate to center of screen
+				   .scale(2000);		  // scale things down so see entire US
+		
 // Define path generator
-var path = d3.geoPath()               // path generator that will convert GeoJSON to SVG paths
+var path = d3.geoPath()			   // path generator that will convert GeoJSON to SVG paths
 			 .projection(projection);  // tell path generator to use albersUsa projection
 
 
@@ -17,12 +17,6 @@ var svg = d3.select("body")
 			.append("svg")
 			.attr("width", width)
 			.attr("height", height);
-        
-// Append Div for tooltip to SVG
-var div = d3.select("body")
-		    .append("div")   
-    		.attr("class", "tooltip")               
-    		.style("opacity", 0);
 
 // Load GeoJSON data and merge with states data
 d3.json("us-states.json", function(json) {
@@ -43,6 +37,7 @@ d3.json("us-states.json", function(json) {
 			.data(data.records)
 			.enter()
 			.append("circle")
+			.attr("class", "circle")
 			.attr("cx", function(d) {
 				return projection([d.fields.Longitude, d.fields.Latitude])[0];
 			})
@@ -50,9 +45,16 @@ d3.json("us-states.json", function(json) {
 				return projection([d.fields.Longitude, d.fields.Latitude])[1];
 			})
 			.attr("r", function(d) {
-				return 6 * 4;
+				return 16;
 			})
-				.style("fill", "rgb(217,91,67)")	
-				.style("opacity", 0.85);
-		});
+			.on("mouseover", function(d) {
+				d3.select("#name").text(d.fields.Name);
+				d3.select("#place").text(d.fields.City + ", " + d.fields.State);
+				d3.select("#date").text(d.fields.Start + " - " + d.fields.End);
+				d3.select("#description").text(d.fields.Description);
+				d3.select("#website").text(d.fields.Website);
+				d3.select("#info").style("visibility", "initial");
+			})
+
+	});
 });

@@ -1,29 +1,22 @@
-path:hover {
-  fill-opacity: .7;
-}
-
-/* Style for Custom Tooltip */
-div.tooltip {   
-  position: absolute;           
-  text-align: center;           
-  width: 60px;                  
-  height: 28px;                 
-  padding: 2px;             
-  font: 12px sans-serif;        
-  background: white;   
-  border: 0px;      
-  border-radius: 8px;           
-  pointer-events: none;         
-}
         
 /* Legend Font Style */
 body {
-  font: 11px sans-serif;
+  font: 1em sans-serif;
+  color: #4fbba9;
 }
-        
-/* Legend Position Style */
-.legend {
-  position:absolute;
-  left:800px;
-  top:350px;
+
+.circle {
+  fill: #4fbba9;
+  opacity: .5;
+}
+
+.circle:hover {
+  opacity: 1;
+}
+
+#info {
+  float: right;
+  visibility: hidden;
+  text-align: center;
+  width: 20%;
 }
