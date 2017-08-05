@@ -20,7 +20,8 @@ var svg = d3.select("body")
 
 // Load GeoJSON data and merge with states data
 d3.json("us-states.json", function(json) {
-		
+	
+	var repeat = {};
 	// Bind the data to the SVG and create one path per GeoJSON feature
 	svg.selectAll("path")
 		.data(json.features)
@@ -32,12 +33,19 @@ d3.json("us-states.json", function(json) {
 		.style("fill", "rgb(213,222,217)");
 
 
-	d3.json("https://api.airtable.com/v0/appLP8buaFL1bs93b/Events?api_key=key4RAnp5ZN85bSlE", function(data) {
+	d3.json("http://edgi-airtable-url-proxy.herokuapp.com/", function(data) {
 		svg.selectAll("circle")
 			.data(data.records)
 			.enter()
 			.append("circle")
-			.attr("class", "circle")
+			.attr("class", function(d){
+				if(repeat[d.fields.City + d.fields["State/Province"]] == null){
+					repeat[d.fields.City + d.fields["State/Province"]] = 1;
+				} else {
+					repeat[d.fields.City + d.fields["State/Province"]]++;
+				}
+				return "circle";
+			})
 			.attr("cx", function(d) {
 				return projection([d.fields.Longitude, d.fields.Latitude])[0];
 			})
@@ -45,15 +53,22 @@ d3.json("us-states.json", function(json) {
 				return projection([d.fields.Longitude, d.fields.Latitude])[1];
 			})
 			.attr("r", function(d) {
-				return 16;
+				return 12;
 			})
 			.on("mouseover", function(d) {
-				d3.select("#name").text(d.fields.Name);
-				d3.select("#place").text(d.fields.City + ", " + d.fields.State);
-				d3.select("#date").text(d.fields.Start + " - " + d.fields.End);
-				d3.select("#description").text(d.fields.Description);
-				d3.select("#website").text(d.fields.Website);
-				d3.select("#info").style("visibility", "initial");
+				if(repeat[d.fields.City + d.fields["State/Province"]] > 1){
+
+				} else {
+					d3.select("#name").text(d.fields.Name);
+					d3.select("#place").text(d.fields.City + ", " + d.fields["State/Province"]);
+					var date1 = d.fields["Start Date/Time"].substring(0,10), date2 = d.fields["End Date/Time"].substring(0, 10);
+					if(date1 == date2){ d3.select("#date").text(date1); } 
+					else { d3.select("#date").text(date1 + " - " + date2); } 
+					var val = d.fields.Description.replace(/\n/g, "<br />");
+					d3.select("#description").html(val);
+					d3.select("#website").html("<a href=\"" + d.fields.Website + "\" target=\"_blank\" >" + d.fields.Website + "</a>" );
+					d3.select("#info").style("visibility", "initial");
+				}
 			})
 
 	});
