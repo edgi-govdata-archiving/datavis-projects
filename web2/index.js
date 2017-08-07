@@ -1,11 +1,11 @@
 //Width and height of map
-var width = 1170;
-var height = 658;
+var width = 1140;
+var height = 641;
 
 // D3 Projection
 var projection = d3.geoAlbersUsa()
 					.translate([width/2, height/2])
-					.scale(1462);
+					.scale(1425);
 		
 // Define path generator
 var path = d3.geoPath()
@@ -34,57 +34,59 @@ d3.json("us-states.json", function(json) {
 		.style("fill", "rgb(213,222,217)");
 
 	d3.json("http://edgi-airtable-url-proxy.herokuapp.com/", function(data) {
-		svg.selectAll("circle")
-			.data(data.records)
+		var byCity = d3.nest()
+						.key(d => d.fields.City + ' ' + d.fields["State/Province"])
+						.entries(data.records);
+
+		svg.selectAll("shapes")
+			.data(byCity)
 			.enter()
 			.append("circle")
 			.attr("class", "circle")
 			.attr("cx", function(d) {
-				return projection([d.fields.Longitude, d.fields.Latitude])[0];
+				return projection([d.values[0].fields.Longitude, d.values[0].fields.Latitude])[0];
 			})
 			.attr("cy", function(d) {
-				return projection([d.fields.Longitude, d.fields.Latitude])[1];
+				return projection([d.values[0].fields.Longitude, d.values[0].fields.Latitude])[1];
 			})
-			.attr("r", function(d) {
-				if(repeat[d.fields.City + d.fields["State/Province"]] == null){
-					repeat[d.fields.City + d.fields["State/Province"]] = 1;
-					return 12;
-				} else {
-					repeat[d.fields.City + d.fields["State/Province"]]++;
-					return 12;
-				}
-			})
+			.attr("r", "16")
 			.on("mouseover", function(d) {
-				if(repeat[d.fields.City + d.fields["State/Province"]] > 1){
-					d3.select("#map_title").text(d.fields.Name);
-					d3.select("#map_location").text(d.fields.City + ", " + d.fields["State/Province"]);
-					if(d.fields["Est. Attendees"] == null){
-						d3.select("#map_attendees").text("Est. Attendees: N/A");
-					} else { d3.select("#map_attendees").text("Est. Attendees: " + d.fields["Est. Attendees"]); }
+				
+				if(d.values.length > 1){
+					d3.select("#map_info").html("").attr("id", "map-carousel");
 
-					var date1 = d.fields["Start Date/Time"].substring(0,10).replace(/-/g, "/"), date2 = d.fields["End Date/Time"].substring(0, 10).replace(/-/g, "/");
-					if(date1 == date2){ d3.select("#map_date").text(date1); } 
-					else { d3.select("#map_date").text(date1 + " - " + date2); } 
+					for(var i = 0; i < d.values.length; i++){
+						var date = d.values[i].fields["Start Date/Time"].substring(0,10), date1 = d.values[i].fields["End Date/Time"].substring(0, 10);
+						if(date != date1){ date = date + " - " + date1 }
 
-					var val = d.fields.Description.replace(/\n/g, "<br />");
-					d3.select("#map_description").html(val);
+						var people = (d.values[i].fields["Est. Attendees"] == null) ? "Est. Attendees: N/A" : "Est. Attendees: " + d.values[i].fields["Est. Attendees"];
 
-					d3.select("#map_website").html("<a href=\"" + d.fields.Website + "\" target=\"_blank\" >Website</a>" );
+						var description = d.values[i].fields.Description.replace(/\n/g, "<br />");
+
+						d3.select("#map_info").append("div").html(
+							"<h1 class=\"title-post entry-title\">" + d.values[i].fields.Name + "</h1><h4>" + d.values[i].fields.City + ", " + d.values[i].fields["State/Province"] + "</h4><h4>" + date + "</h4><h4>" + people + "</h4><h4><a href=\"" + d.values[i].fields.Website + "\" target=\"_blank\">Website</a></h4><p>" + description + "</p>"
+						);
+					}
+
+					$(document).ready(function() { 
+						$("#map-carousel").owlCarousel({
+							items : d.values.length;
+							autoPlay : true;
+						});
+
+					});
+
 				} else {
-					d3.select("#map_title").text(d.fields.Name);
-					d3.select("#map_location").text(d.fields.City + ", " + d.fields["State/Province"]);
-					if(d.fields["Est. Attendees"] == null){
-						d3.select("#map_attendees").text("Est. Attendees: N/A");
-					} else { d3.select("#map_attendees").text("Est. Attendees: " + d.fields["Est. Attendees"]); }
+					var date = d.values[0].fields["Start Date/Time"].substring(0,10), date1 = d.values[0].fields["End Date/Time"].substring(0, 10);
+					if(date != date1){ date = date + " - " + date1 }
 
-					var date1 = d.fields["Start Date/Time"].substring(0,10).replace(/-/g, "/"), date2 = d.fields["End Date/Time"].substring(0, 10).replace(/-/g, "/");
-					if(date1 == date2){ d3.select("#map_date").text(date1); } 
-					else { d3.select("#map_date").text(date1 + " - " + date2); } 
+					var people = (d.values[0].fields["Est. Attendees"] == null) ? "Est. Attendees: N/A" : "Est. Attendees: " + d.values[0].fields["Est. Attendees"];
 
-					var val = d.fields.Description.replace(/\n/g, "<br />");
-					d3.select("#map_description").html(val);
+					var description = d.values[0].fields.Description.replace(/\n/g, "<br />");
 
-					d3.select("#map_website").html("<a href=\"" + d.fields.Website + "\" target=\"_blank\" >Website</a>" );
+					d3.select("#map_info").html(
+						"<h1 class=\"title-post entry-title\">" + d.values[0].fields.Name + "</h1><h4>" + d.values[0].fields.City + ", " + d.values[0].fields["State/Province"] + "</h4><h4>" + date + "</h4><h4>" + people + "</h4><h4><a href=\"" + d.values[0].fields.Website + "\" target=\"_blank\">Website</a></h4><p>" + description + "</p>"
+					);
 				}
 			})
 
