@@ -6,7 +6,7 @@ var height = 658;
 var projection = d3.geoAlbersUsa()
 					.translate([width/2, height/2])
 					.scale(1462);
-		
+
 // Define path generator
 var path = d3.geoPath()
 			.projection(projection);
@@ -20,8 +20,8 @@ var svg = d3.select("#map")
 			.attr("preserveAspectRatio", "xMidYMid meet");
 
 // Load GeoJSON data and merge with states data
-d3.json("us-states.json", function(json) {
-	
+d3.json("https://envirodatagov.org/wp-content/uploads/us-states.json", function(json) {
+
 	var repeat = {};
 	// Bind the data to the SVG and create one path per GeoJSON feature
 	svg.selectAll("path")
@@ -33,7 +33,7 @@ d3.json("us-states.json", function(json) {
 		.style("stroke-width", "1")
 		.style("fill", "rgb(213,222,217)");
 
-	d3.json("http://edgi-airtable-url-proxy.herokuapp.com/", function(data) {
+	d3.json("https://edgi-airtable-url-proxy.herokuapp.com/", function(data) {
 		svg.selectAll("circle")
 			.data(data.records)
 			.enter()
@@ -63,8 +63,8 @@ d3.json("us-states.json", function(json) {
 					} else { d3.select("#map_attendees").text("Est. Attendees: " + d.fields["Est. Attendees"]); }
 
 					var date1 = d.fields["Start Date/Time"].substring(0,10).replace(/-/g, "/"), date2 = d.fields["End Date/Time"].substring(0, 10).replace(/-/g, "/");
-					if(date1 == date2){ d3.select("#map_date").text(date1); } 
-					else { d3.select("#map_date").text(date1 + " - " + date2); } 
+					if(date1 == date2){ d3.select("#map_date").text(date1); }
+					else { d3.select("#map_date").text(date1 + " - " + date2); }
 
 					var val = d.fields.Description.replace(/\n/g, "<br />");
 					d3.select("#map_description").html(val);
@@ -78,8 +78,8 @@ d3.json("us-states.json", function(json) {
 					} else { d3.select("#map_attendees").text("Est. Attendees: " + d.fields["Est. Attendees"]); }
 
 					var date1 = d.fields["Start Date/Time"].substring(0,10).replace(/-/g, "/"), date2 = d.fields["End Date/Time"].substring(0, 10).replace(/-/g, "/");
-					if(date1 == date2){ d3.select("#map_date").text(date1); } 
-					else { d3.select("#map_date").text(date1 + " - " + date2); } 
+					if(date1 == date2){ d3.select("#map_date").text(date1); }
+					else { d3.select("#map_date").text(date1 + " - " + date2); }
 
 					var val = d.fields.Description.replace(/\n/g, "<br />");
 					d3.select("#map_description").html(val);
