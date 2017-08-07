@@ -21,8 +21,6 @@ var svg = d3.select("#map")
 
 // Load GeoJSON data and merge with states data
 d3.json("us-states.json", function(json) {
-	
-	var repeat = {};
 	// Bind the data to the SVG and create one path per GeoJSON feature
 	svg.selectAll("path")
 		.data(json.features)
@@ -51,7 +49,6 @@ d3.json("us-states.json", function(json) {
 			})
 			.attr("r", "16")
 			.on("mouseover", function(d) {
-				
 				if(d.values.length > 1){
 					d3.select("#map_info").html("").attr("id", "map-carousel");
 
@@ -70,8 +67,8 @@ d3.json("us-states.json", function(json) {
 
 					$(document).ready(function() { 
 						$("#map-carousel").owlCarousel({
-							items : d.values.length;
-							autoPlay : true;
+							items : d.values.length,
+							autoPlay : true
 						});
 
 					});
