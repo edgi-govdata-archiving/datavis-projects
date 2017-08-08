@@ -65,7 +65,7 @@ d3.json("us-states.json", function(json) {
 						);
 					}
 
-					$(document).ready(function() { 
+					jQuery(document).ready(function() { 
 						$("#map-carousel").owlCarousel({
 							items : d.values.length,
 							autoPlay : true
