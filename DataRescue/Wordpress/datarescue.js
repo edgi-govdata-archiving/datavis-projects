@@ -64,7 +64,7 @@ d3.json("us-states.json", function(json){
 						);
 					}
 
-					$('.mapslider').slick({
+					jQuery('.mapslider').slick({
 						dots: true,
 						fade: true,
 						cssEase: 'linear',
