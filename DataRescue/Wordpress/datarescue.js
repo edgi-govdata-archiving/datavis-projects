@@ -17,7 +17,9 @@ var svg = d3.select("#map")
 			.attr("width", width)
 			.attr("height", height)
 			.attr("viewBox", "0 0 " + width + " " + height)
-			.attr("preserveAspectRatio", "xMidYMid meet");
+			.attr("preserveAspectRatio", "xMidYMid meet")
+			.style("width", "100%")
+			.style("height", "auto");
 
 d3.json("https://envirodatagov.org/wp-includes/assets/us-states.json", function(json){
 
@@ -32,7 +34,7 @@ d3.json("https://envirodatagov.org/wp-includes/assets/us-states.json", function(
 
 	d3.json("https://edgi-airtable-url-proxy.herokuapp.com/", function(data){
 		var byCity = d3.nest()
-						.key(d => d.fields.City + ' ' + d.fields["State/Province"])
+						.key(function(d){return d.fields.City + ' ' + d.fields["State/Province"]})
 						.entries(data.records);
 
 		svg.selectAll("shapes")
@@ -46,7 +48,7 @@ d3.json("https://envirodatagov.org/wp-includes/assets/us-states.json", function(
 			.attr("cy", function(d) {
 				return projection([d.values[0].fields.Longitude, d.values[0].fields.Latitude])[1];
 			})
-			.attr("r", "16")
+			.attr("r", "12")
 			.on("mouseover", function(d) {
 				if(d.values.length > 1){
 					d3.select("#map_info").html("").attr("class", "page type-page status-publish hentry mapslider");

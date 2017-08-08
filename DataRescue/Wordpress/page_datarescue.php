@@ -8,9 +8,7 @@ Template Name: DataRescue
 	get_header();
 ?>
 
-  <div id="map" style="display: flex; justify-content: center;">
-
-  </div>
+  <div id="map"></div>
 
 	<div id="primary" class="content-area">
 		<main id="main" class="site-main" role="main">

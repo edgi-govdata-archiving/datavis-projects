@@ -17,7 +17,9 @@ var svg = d3.select("#map")
 			.attr("width", width)
 			.attr("height", height)
 			.attr("viewBox", "0 0 " + width + " " + height)
-			.attr("preserveAspectRatio", "xMidYMid meet");
+			.attr("preserveAspectRatio", "xMidYMid meet")
+			.style("width", "100%")
+			.style("height", "auto");
 
 d3.json("us-states.json", function(json){
 
@@ -32,7 +34,7 @@ d3.json("us-states.json", function(json){
 
 	d3.json("http://edgi-airtable-url-proxy.herokuapp.com/", function(data){
 		var byCity = d3.nest()
-						.key(d => d.fields.City + ' ' + d.fields["State/Province"])
+						.key(function(d){return d.fields.City + ' ' + d.fields["State/Province"]})
 						.entries(data.records);
 
 		svg.selectAll("shapes")
