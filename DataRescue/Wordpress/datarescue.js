@@ -6,7 +6,7 @@ var height = 641;
 var projection = d3.geoAlbersUsa()
 					.translate([width/2, height/2])
 					.scale(1425);
-		
+
 // Define path generator
 var path = d3.geoPath()
 			.projection(projection);
@@ -19,7 +19,7 @@ var svg = d3.select("#map")
 			.attr("viewBox", "0 0 " + width + " " + height)
 			.attr("preserveAspectRatio", "xMidYMid meet");
 
-d3.json("us-states.json", function(json){
+d3.json("https://envirodatagov.org/wp-includes/assets/us-states.json", function(json){
 
 	svg.selectAll("path")
 		.data(json.features)
@@ -30,7 +30,7 @@ d3.json("us-states.json", function(json){
 		.style("stroke-width", "1")
 		.style("fill", "rgb(213,222,217)");
 
-	d3.json("http://edgi-airtable-url-proxy.herokuapp.com/", function(data){
+	d3.json("https://edgi-airtable-url-proxy.herokuapp.com/", function(data){
 		var byCity = d3.nest()
 						.key(d => d.fields.City + ' ' + d.fields["State/Province"])
 						.entries(data.records);
