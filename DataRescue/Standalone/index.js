@@ -72,8 +72,8 @@ d3.json("us-states.json", function(json){
 						cssEase: 'linear',
 						autoPlay: true,
 						swipeToSlide: true,
-						arrows: false
-
+						arrows: false,
+						adaptiveHeight: true
 					});
 
 				} else {
