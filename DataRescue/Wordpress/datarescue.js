@@ -49,7 +49,7 @@ d3.json("us-states.json", function(json){
 			.attr("r", "16")
 			.on("mouseover", function(d) {
 				if(d.values.length > 1){
-					d3.select("#map_info").html("").attr("class", "slider");
+					d3.select("#map_info").html("").attr("class", "page type-page status-publish hentry mapslider");
 
 					for(var i = 0; i < d.values.length; i++){
 						var date = d.values[i].fields["Start Date/Time"].substring(0,10), date1 = d.values[i].fields["End Date/Time"].substring(0, 10);
@@ -60,11 +60,11 @@ d3.json("us-states.json", function(json){
 						var description = d.values[i].fields.Description.replace(/\n/g, "<br />");
 
 						d3.select("#map_info").append("div").html(
-							"<h1>" + d.values[i].fields.Name + "</h1><h4>" + d.values[i].fields.City + ", " + d.values[i].fields["State/Province"] + "</h4><h4>" + date + "</h4><h4>" + people + "</h4><h4><a href=\"" + d.values[i].fields.Website + "\" target=\"_blank\">Website</a></h4><p>" + description + "</p>"
+							"<h1 class=\"title-post entry-title\">" + d.values[i].fields.Name + "</h1><h4>" + d.values[i].fields.City + ", " + d.values[i].fields["State/Province"] + "</h4><h4>" + date + "</h4><h4>" + people + "</h4><h4><a href=\"" + d.values[i].fields.Website + "\" target=\"_blank\">Website</a></h4><p>" + description + "</p>"
 						);
 					}
 
-					$('.slider').slick({
+					$('.mapslider').slick({
 						dots: true,
 						fade: true,
 						cssEase: 'linear',
@@ -82,8 +82,8 @@ d3.json("us-states.json", function(json){
 
 					var description = d.values[0].fields.Description.replace(/\n/g, "<br />");
 
-					d3.select("#map_info").attr("class", null).html(
-						"<h1>" + d.values[0].fields.Name + "</h1><h4>" + d.values[0].fields.City + ", " + d.values[0].fields["State/Province"] + "</h4><h4>" + date + "</h4><h4>" + people + "</h4><h4><a href=\"" + d.values[0].fields.Website + "\" target=\"_blank\">Website</a></h4><p>" + description + "</p>"
+					d3.select("#map_info").attr("class", "page type-page status-publish hentry").html(
+						"<h1 class=\"title-post entry-title\">" + d.values[0].fields.Name + "</h1><h4>" + d.values[0].fields.City + ", " + d.values[0].fields["State/Province"] + "</h4><h4>" + date + "</h4><h4>" + people + "</h4><h4><a href=\"" + d.values[0].fields.Website + "\" target=\"_blank\">Website</a></h4><p>" + description + "</p>"
 					);
 				}
 			});
