@@ -19,9 +19,8 @@ var svg = d3.select("#map")
 			.attr("viewBox", "0 0 " + width + " " + height)
 			.attr("preserveAspectRatio", "xMidYMid meet");
 
-// Load GeoJSON data and merge with states data
-d3.json("us-states.json", function(json) {
-	// Bind the data to the SVG and create one path per GeoJSON feature
+d3.json("us-states.json", function(json){
+
 	svg.selectAll("path")
 		.data(json.features)
 		.enter()
@@ -31,7 +30,7 @@ d3.json("us-states.json", function(json) {
 		.style("stroke-width", "1")
 		.style("fill", "rgb(213,222,217)");
 
-	d3.json("http://edgi-airtable-url-proxy.herokuapp.com/", function(data) {
+	d3.json("http://edgi-airtable-url-proxy.herokuapp.com/", function(data){
 		var byCity = d3.nest()
 						.key(d => d.fields.City + ' ' + d.fields["State/Province"])
 						.entries(data.records);
@@ -50,7 +49,7 @@ d3.json("us-states.json", function(json) {
 			.attr("r", "16")
 			.on("mouseover", function(d) {
 				if(d.values.length > 1){
-					d3.select("#map_info").html("").attr("id", "map-carousel");
+					d3.select("#map_info").html("").attr("class", "slider");
 
 					for(var i = 0; i < d.values.length; i++){
 						var date = d.values[i].fields["Start Date/Time"].substring(0,10), date1 = d.values[i].fields["End Date/Time"].substring(0, 10);
@@ -65,11 +64,13 @@ d3.json("us-states.json", function(json) {
 						);
 					}
 
-					jQuery(document).ready(function() { 
-						$("#map-carousel").owlCarousel({
-							items : d.values.length,
-							autoPlay : true
-						});
+					$('.slider').slick({
+						dots: true,
+						fade: true,
+						cssEase: 'linear',
+						autoPlay: true,
+						swipeToSlide: true,
+						arrows: false
 
 					});
 
@@ -81,7 +82,7 @@ d3.json("us-states.json", function(json) {
 
 					var description = d.values[0].fields.Description.replace(/\n/g, "<br />");
 
-					d3.select("#map_info").html(
+					d3.select("#map_info").attr("class", null).html(
 						"<h1 class=\"title-post entry-title\">" + d.values[0].fields.Name + "</h1><h4>" + d.values[0].fields.City + ", " + d.values[0].fields["State/Province"] + "</h4><h4>" + date + "</h4><h4>" + people + "</h4><h4><a href=\"" + d.values[0].fields.Website + "\" target=\"_blank\">Website</a></h4><p>" + description + "</p>"
 					);
 				}
