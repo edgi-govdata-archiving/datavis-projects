@@ -11,7 +11,7 @@ var color = d3.scaleLinear()
 var vis = d3.select("#chart").append("svg")
 		.attr("width", width)
 		.attr("height", height)
-		.append("svg:g")
+		.append("g")
 		.attr("id", "container")
 		.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
@@ -27,7 +27,7 @@ var arc = d3.arc()
 d3.json("coverage.json", function(error, root) {
 	if (error) throw error;
 
-	vis.append("svg:circle")
+	vis.append("circle")
 			.attr("r", radius)
 			.style("opacity", 0);
 
@@ -42,19 +42,21 @@ d3.json("coverage.json", function(error, root) {
 				return (d.x1 - d.x0 > 0.005); // 0.005 radians = 0.29 degrees
 			});
 
-	var path = vis.data([root]).selectAll("path")
-			.data(nodes)
-			.enter().append("svg:path")
-			.attr("display", function(d) { return d.depth ? null : "none"; })
-			.attr("d", arc)
-			.attr("fill-rule", "evenodd")
-			.style("fill", function(d) { return color(d.data.numLeavesArchived/d.data.numLeaves); })
-			.style("opacity", 1)
-			.on("mouseover", mouseover)
-			.each(stash)
-				.transition()
-				.duration(750)
-				.attrTween("d", arcTween());
+	console.log(root);
+
+	vis.data([root]).selectAll("path")
+		.data(nodes)
+		.enter().append("path")
+		.attr("display", function(d) { return d.depth ? null : "none"; })
+		.attr("d", arc)
+		.attr("fill-rule", "evenodd")
+		.style("fill", function(d) { return color(d.data.numLeavesArchived/d.data.numLeaves); })
+		.style("opacity", 1)
+		.on("mouseover", mouseover)
+		.each(stash)
+			.transition()
+			.duration(750)
+			.attrTween("d", arcTween());
 
 	// Add the mouseleave handler to the bounding circle.
 	d3.select("#container").on("mouseleave", mouseleave);
@@ -110,8 +112,6 @@ function click(d)
 */
 // Fade all but the current sequence, and show it in the breadcrumb trail.
 function mouseover(d) {
-	console.log(d);
-
 	// if the DEPTH is greater than one? //
 	if(d.depth > 1){
 		var percentage = (100 * d.data.numLeavesArchived / d.parent.data.numLeaves).toPrecision(3);
