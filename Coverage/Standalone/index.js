@@ -3,20 +3,12 @@ var width = 750;
 var height = 600;
 var radius = Math.min(width, height) / 2;
 
-// Breadcrumb dimensions: width, height, spacing, width of tip/tail.
-var b = {
-	w: 75, h: 30, s: 3, t: 10
-};
-
-// Total size of all segments; we set this later, after loading the data.
-var totalSize = 0;
-
 var color = d3.scaleLinear()
 	.interpolate(d3.interpolateHcl)
 	.domain([0.2, 0.4, 0.6, 0.8, 1])
 	.range([d3.rgb("#FF0000"), d3.rgb("#FF7F00"), d3.rgb("#FFFF00"), d3.rgb("#7FFF00"), d3.rgb("#00FF00")]);
 
-var vis = d3.select("#chart").append("svg:svg")
+var vis = d3.select("#chart").append("svg")
 		.attr("width", width)
 		.attr("height", height)
 		.append("svg:g")
@@ -34,16 +26,11 @@ var arc = d3.arc()
 
 d3.json("coverage.json", function(error, root) {
 	if (error) throw error;
-	// Basic setup of page elements.
- /* initializeBreadcrumbTrail(); */
 
-	// Bounding circle underneath the sunburst, to make it easier to detect
-	// when the mouse leaves the parent g.
 	vis.append("svg:circle")
 			.attr("r", radius)
 			.style("opacity", 0);
 
-	totalSize = root.data.numLeaves;
 	delete root.data.numLeaves;
 	
 	root = d3.hierarchy(root.data)
@@ -63,15 +50,33 @@ d3.json("coverage.json", function(error, root) {
 			.attr("fill-rule", "evenodd")
 			.style("fill", function(d) { return color(d.data.numLeavesArchived/d.data.numLeaves); })
 			.style("opacity", 1)
-			.on("mouseover", mouseover)/*
+			.on("mouseover", mouseover)
 			.each(stash)
 				.transition()
 				.duration(750)
-				.attrTween("d", arcTween)*/;
+				.attrTween("d", arcTween());
 
 	// Add the mouseleave handler to the bounding circle.
 	d3.select("#container").on("mouseleave", mouseleave);
 });
+
+function arcTween(){
+	return function(d){
+		var i = d3.interpolate(d.x0, d.x1);
+		return function(t){
+			d.x1 = i(t);
+			return arc(d);
+		};
+
+	};
+};
+        
+function stash(d) {
+	/*
+  d.x0 = 0; // d.x;
+  d.x1 = 0; //d.dx;*/
+};
+
 
 /*
 function click(d)
@@ -105,6 +110,8 @@ function click(d)
 */
 // Fade all but the current sequence, and show it in the breadcrumb trail.
 function mouseover(d) {
+	console.log(d);
+
 	// if the DEPTH is greater than one? //
 	if(d.depth > 1){
 		var percentage = (100 * d.data.numLeavesArchived / d.parent.data.numLeaves).toPrecision(3);
@@ -127,7 +134,6 @@ function mouseover(d) {
 
 	var sequenceArray = d.ancestors().reverse();
 	sequenceArray.shift();
-	//updateBreadcrumbs(sequenceArray, percentageString);
 
 	// Fade all the segments.
 	d3.selectAll("path")
@@ -165,90 +171,3 @@ function mouseleave(d) {
 			.duration(1000)
 			.style("visibility", "hidden");
 }
-
-
-/*
-function initializeBreadcrumbTrail() {
-	// Add the svg area.
-	var trail = d3.select("#sequence").append("svg:svg")
-			.attr("width", width)
-			.attr("height", 50)
-			.attr("id", "trail");
-	// Add the label at the end, for the percentage.
-	trail.append("svg:text")
-		.attr("id", "endlabel")
-		.style("fill", "#000");
-}
-
-
-// Generate a string that describes the points of a breadcrumb polygon.
-function breadcrumbPoints(d, i) {
-	var points = [];
-	points.push("0,0");
-	points.push(b.w + ",0");
-	points.push(b.w + b.t + "," + (b.h / 2));
-	points.push(b.w + "," + b.h);
-	points.push("0," + b.h);
-	if (i > 0) { // Leftmost breadcrumb; don't include 6th vertex.
-		points.push(b.t + "," + (b.h / 2));
-	}
-	return points.join(" ");
-}
-// Update the breadcrumb trail to show the current sequence and percentage.
-function updateBreadcrumbs(nodeArray, percentageString) {
-
-	// Data join; key function combines name and depth (= position in sequence).
-	var trail = d3.select("#trail")
-			.selectAll("g")
-			.data(nodeArray, function(d) { return d.data.name + d.depth; });
-
-	// Remove exiting nodes.
-	trail.exit().remove();
-
-	// Add breadcrumb and label for entering nodes.
-	var entering = trail.enter().append("svg:g");
-
-	entering.append("svg:polygon")
-			.attr("points", breadcrumbPoints)
-			.style("fill", function(d) { return '#000'; });
-
-	entering.append("svg:text")
-			.attr("x", (b.w + b.t) / 2)
-			.attr("y", b.h / 2)
-			.attr("dy", "0.35em")
-			.attr("text-anchor", "middle")
-			.text(function(d) { return d.name; });
-
-	// Set position for entering and updating nodes.
- entering.merge(trail).attr("transform", function(d, i) {
-		return "translate(" + i * (b.w + b.s) + ", 0)";
-	});
-
-	// Now move and update the percentage at the end.
-	d3.select("#trail").select("#endlabel")
-			.attr("x", (nodeArray.length + 0.5) * (b.w + b.s))
-			.attr("y", b.h / 2)
-			.attr("dy", "0.35em")
-			.attr("text-anchor", "middle")
-			.text(percentageString);
-
-	// Make the breadcrumb trail visible, if it's hidden.
-	d3.select("#trail")
-			.style("visibility", "");
-
-}*/
-
-function arcTween(a){
-  var i = d3.interpolate({x: a.x0, dx: a.x1}, a);
-  return function(t) {
-    var b = i(t);
-    a.x0 = b.x0;
-    a.x1 = b.x1;
-    return arc(b);
-  };
-};
-        
-function stash(d) {
-  d.x0 = 0; // d.x;
-  d.x1 = 0; //d.dx;
-};
