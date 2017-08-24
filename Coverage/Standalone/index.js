@@ -3,10 +3,9 @@ var width = 750;
 var height = 600;
 var radius = Math.min(width, height) / 2;
 
-var color = d3.scaleLinear()
-	.interpolate(d3.interpolateHcl)
-	.domain([0.2, 0.4, 0.6, 0.8, 1])
-	.range([d3.rgb("#FF0000"), d3.rgb("#FF7F00"), d3.rgb("#FFFF00"), d3.rgb("#7FFF00"), d3.rgb("#00FF00")]);
+var color = d3.scaleQuantile()
+	.domain([0, 1])
+	.range([d3.rgb('#fff7fb'),d3.rgb('#ece2f0'),d3.rgb('#d0d1e6'),d3.rgb('#a6bddb'),d3.rgb('#67a9cf'),d3.rgb('#3690c0'),d3.rgb('#02818a'),d3.rgb('#016c59'),d3.rgb('#014636')]);
 
 var vis = d3.select("#chart").append("svg")
 		.attr("width", width)
@@ -113,11 +112,7 @@ function click(d)
 // Fade all but the current sequence, and show it in the breadcrumb trail.
 function mouseover(d) {
 	// if the DEPTH is greater than one? //
-	if(d.depth > 1){
-		var percentage = (100 * d.data.numLeavesArchived / d.parent.data.numLeaves).toPrecision(3);
-	} else {
-		var percentage = (100 * d.data.numLeavesArchived / d.data.numLeaves).toPrecision(3);
-	}
+	var percentage = (100 * d.data.numLeavesArchived / d.data.numLeaves).toPrecision(3);
 
 	var percentageString = percentage + "%";
 	if (percentage < 0.1) {
