@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import './Coverage.css'
 
 import { scaleQuantile } from 'd3-scale'
-import { interpolateHcl } from 'd3-interpolate'
 import { rgb } from 'd3-color'
 
 import { hierarchy, partition } from 'd3-hierarchy'
@@ -74,7 +73,7 @@ class Coverage extends Component {
   }
 
   highlightArc(d){
-    if(this.state.node == undefined){
+    if(this.state.node === undefined){
       return 1;
     } else {
       if(this.state.node.data === d.data){
@@ -95,7 +94,7 @@ class Coverage extends Component {
     return (
       <div id="chart">
 
-      { this.state.node == undefined ? "" : ( <div id="explanation">
+      { this.state.node === undefined ? "" : ( <div id="explanation">
           <span id="website" >{ this.state.node.data.name }</span><br />
           <span id="percentage">{ this.calcPercent() }</span><br/>has been archived
         </div> )
@@ -114,5 +113,10 @@ class Coverage extends Component {
     );
   }
 }
-
+// Coverage.propTypes = { 
+//   width: React.PropType.number.isRequired, 
+//   height: React.PropType.number.isRequired, 
+//   radius: React.PropType.number.isRequired, 
+//   data: React.PropType.object.isRequired 
+// }
 export default Coverage;
