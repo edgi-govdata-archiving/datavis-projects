@@ -23,7 +23,7 @@ var arc = d3.arc()
 		.innerRadius(function(d) { return Math.sqrt(d.y0); })
 		.outerRadius(function(d) { return Math.sqrt(d.y1); });
 
-d3.json("coverage.json", function(error, root) {
+d3.json("sample.json", function(error, root) {
 	if (error) throw error;
 
 	vis.append("circle")
